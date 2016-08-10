@@ -20,7 +20,7 @@ void ofApp::setup(){
 
 
 	// container
-	vector<float> seeds; // define seeds as a float vector 
+	vector<float> seeds; // define "seeds" as a vector of float
 	cout << "define a vector of float named seeds" << endl;
 	seeds.push_back(3.14159f); // add element at the end of vector
 	seeds.push_back(1.414f);
@@ -28,10 +28,12 @@ void ofApp::setup(){
 	cout << "seeds has " << seeds.size() << " elements" << endl;
 	seeds[0]; // get value at position 0
 	seeds.at(1); // get value at position 1
-	cout << "seeds has float " << seeds[0] << " at position 0" << endl;
+	cout << "seeds has float " << seeds.at(0) << " at position 0" << endl;
+	cout << "seeds has float " << seeds[1] << " at position 1" << endl;
 	seeds.pop_back(); // remove the last element
+	cout << "seeds has " << seeds.size() << " elements after pop_back()" << endl;
 	seeds.clear(); // clear vector
-
+	cout << "seeds has " << seeds.size() << " elements after clear()" << endl;
 
 
 	// loop
