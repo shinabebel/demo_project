@@ -21,9 +21,16 @@ public:
 	void windowResized(int w, int h);
 	void dragEvent(ofDragInfo dragInfo);
 	void gotMessage(ofMessage msg);
-
+#if 0
 	// define mouse_position as a vector of ofVec2f to store mouse position history
 	vector<ofVec2f> mouse_position;
+#endif
 
+	// this is for storing the line we are dragging
+	ofPolyline current_line;
+	// history lines we have drawn
+	vector<ofPolyline> history_lines;
+	// minor lines
+	vector<ofPolyline> minor_lines;
 
 };

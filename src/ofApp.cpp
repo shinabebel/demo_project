@@ -147,7 +147,7 @@ void ofApp::draw(){
 	ofBackgroundGradient(ofColor(64), ofColor(0), ofGradientMode::OF_GRADIENT_CIRCULAR);
 	ofBackgroundGradient(ofColor(64), ofColor(0), ofGradientMode::OF_GRADIENT_LINEAR);
 	ofBackgroundGradient(ofColor::fromHex(0xF82C30), ofColor::fromHex(0x092743), ofGradientMode::OF_GRADIENT_CIRCULAR);
-
+#if 0
 	// draw line only if we have more than 1 position
 	if (mouse_position.size() > 1) 
 	{
@@ -162,8 +162,28 @@ void ofApp::draw(){
 			ofDrawLine(mouse_position[i + 0], mouse_position[i + 1]);
 		}
 	}
-
+#endif
 	
+	// draw current line
+	ofSetColor(ofColor::fromHex(0x105B63));
+	ofSetLineWidth(1);
+	current_line.draw();
+
+	// draw history lines
+	ofSetColor(ofColor::fromHex(0xDB9E36));
+	ofSetLineWidth(2);
+	for (int i = 0; i < history_lines.size(); i++)
+	{
+		history_lines[i].draw();
+	}
+
+	// draw lines nearby
+	ofSetColor(ofColor::fromHex(0xBD4932));
+	ofSetLineWidth(1);
+	for (int i = 0; i < minor_lines.size(); i++)
+	{
+		minor_lines[i].draw();
+	}
 
 }
 
@@ -184,9 +204,48 @@ void ofApp::mouseMoved(int x, int y){
 
 //--------------------------------------------------------------
 void ofApp::mouseDragged(int x, int y, int button){
+#if 0
 	//ofVec2f pos = ofVec2f(x, y);
 	//mouse_position.push_back(pos);
 	mouse_position.push_back(ofVec2f(x, y)); // add mouse position (x, y) to vector
+#endif
+	// add mouse pos (x, y) to current polyline
+	current_line.addVertex(x, y);
+
+	// we check every vertex of history lines to add any lines nearby
+	// you can change min and max distance
+	float min_distance = 10.0f;
+	float max_distance = 30.0f;
+	// for loop to check every history lines
+	for (int i = 0; i < history_lines.size(); i++)
+	{
+		// for loop to check every vertex on line
+		// ofPolyLine::getVertices() will get vector of vertices it stores
+		// we can check every point in vector
+		for (int j = 0; j < history_lines[i].getVertices().size(); j++)
+		{
+			// assign vertex in potision 'j' to history_point
+			ofVec2f history_point = history_lines[i].getVertices()[j];
+			// for getting distance between mouse posiiton (x, y) and history_point,
+			// we can use ofDist(float x1, float y1, float x2, float y2)
+			// it will return distance between 2 points in float
+			float dist = ofDist(x, y, history_point.x, history_point.y);
+			// so we could check distance is in min-max range or not
+			// use ofInRange(float t, float min, float max)
+			// it will return bool (true, false) 
+			if (ofInRange(dist, min_distance, max_distance))
+			{
+				// if distance is in range
+				// create new ofPolyLine and add mouse position and history point to it
+				// and push_back to minor_lines
+				ofPolyline line;
+				line.addVertex(x, y);
+				line.addVertex(history_point);
+				minor_lines.push_back(line);
+			}
+		}
+		
+	}
 }
 
 //--------------------------------------------------------------
@@ -196,7 +255,9 @@ void ofApp::mousePressed(int x, int y, int button){
 
 //--------------------------------------------------------------
 void ofApp::mouseReleased(int x, int y, int button){
-
+	// if mouse released, add current line to history and clear it
+	history_lines.push_back(current_line);
+	current_line.clear();
 }
 
 //--------------------------------------------------------------
