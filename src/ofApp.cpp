@@ -129,7 +129,7 @@ void ofApp::setup(){
 
 //--------------------------------------------------------------
 void ofApp::update(){
-	
+	ofSetWindowTitle(ofVAArgsToString("fps: %f", ofGetFrameRate()));
 
 }
 
